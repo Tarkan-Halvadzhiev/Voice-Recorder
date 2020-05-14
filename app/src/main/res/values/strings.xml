@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Voice Recorder</string>
     <string name="button_name">Record</string>
+    <string name="button_name_stop_recording">Stop Recording</string>
+    <string name="time_format">H:MM:SS</string>
+    <string name="chronometer">H:MM:SS</string>
 </resources>
