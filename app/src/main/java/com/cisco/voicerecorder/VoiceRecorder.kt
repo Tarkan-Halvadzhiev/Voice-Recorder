@@ -1,23 +1,27 @@
 package com.cisco.voicerecorder
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
+import android.view.View
 import android.widget.Button
 import android.widget.Chronometer
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.cisco.voicerecorder.utils.RecordFiles
 import java.io.IOException
 
 class VoiceRecorder : AppCompatActivity() {
 
+    private val recordFiles : RecordFiles = RecordFiles()
+    private var fileCounting: Int = recordFiles.getAllRecords()?.size ?: 0
     private var output: String? = null
     private var mediaRecorder: MediaRecorder? = null
-    private var fileCounting: Int = 905
     private val recordAudio = Manifest.permission.RECORD_AUDIO
     private val writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private val readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE
@@ -28,6 +32,15 @@ class VoiceRecorder : AppCompatActivity() {
 
         checkPermissions()
         pressedButton()
+        redirectToRecordLibrary()
+    }
+
+    private fun redirectToRecordLibrary() {
+        val button: Button = findViewById(R.id.record_library_view)
+        button.setOnClickListener {
+            val intent = Intent(this, RecordLibrary::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun pressedButton() {
@@ -79,7 +92,7 @@ class VoiceRecorder : AppCompatActivity() {
 
     private fun initializeMediaRecord() {
         output =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).path + "/record-$fileCounting.mp3"
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).path + "/record-${fileCounting + 1}.mp3"
         fileCounting++
         mediaRecorder = MediaRecorder()
         mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
