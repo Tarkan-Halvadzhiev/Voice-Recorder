@@ -3,15 +3,17 @@ package com.cisco.voicerecorder
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
+import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.cisco.voicerecorder.custom.adapter.CustomRecordAdapter
 import com.cisco.voicerecorder.utils.ExternalStorageDestination
+import com.cisco.voicerecorder.utils.RecordedFiles
 import java.io.File
 import java.io.IOException
-import com.cisco.voicerecorder.utils.RecordedFiles
 
 
 class RecordLibrary : AppCompatActivity() {
@@ -21,19 +23,24 @@ class RecordLibrary : AppCompatActivity() {
     private var lastImageViewStartButton: ImageView? = null
     private var lastImageViewStopButton: ImageView? = null
     private var mediaSource: String = ExternalStorageDestination.getPath()
+    private var playTime: Int = 0
+    private var endTime: Int = 0
+    private var seekBar: SeekBar? = null
+    private var handler: Handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.library_record_activity)
         val listView: ListView = findViewById(R.id.audio_record)
 
-        listView.adapter = CustomRecordAdapter(this, this.recordFiles)
+        listView.adapter = CustomRecordAdapter(this, recordFiles)
     }
 
     fun startAudio(
         lastImageViewActionStart: ImageView,
         lastImageViewActionStop: ImageView,
-        fileName: String?
+        fileName: String?,
+        seekBar: SeekBar
     ) {
         setViabilityForPressedButtons(lastImageViewActionStart, lastImageViewActionStop)
 
@@ -47,13 +54,30 @@ class RecordLibrary : AppCompatActivity() {
             mediaPlayer?.setDataSource("$mediaSource/$fileName")
             mediaPlayer?.prepare()
             mediaPlayer?.start()
+
+            seekBarInitialization(seekBar)
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
+        finishAudioFile()
+    }
+
+    private fun seekBarInitialization(currentSeekBar: SeekBar) {
+        seekBar = currentSeekBar
+        seekBar?.visibility = View.VISIBLE
+        endTime = mediaPlayer?.duration!!
+        playTime = mediaPlayer?.currentPosition!!
+        seekBar?.max = endTime
+        seekBar?.progress = playTime
+        handler.postDelayed(updateSongTime, 100)
+    }
+
+    private fun finishAudioFile() {
         mediaPlayer?.setOnCompletionListener {
             lastImageViewStartButton?.visibility = View.INVISIBLE
             lastImageViewStopButton?.visibility = View.VISIBLE
+            seekBar?.visibility = View.INVISIBLE
             releaseMediaPlayerRecourse()
         }
     }
@@ -88,8 +112,22 @@ class RecordLibrary : AppCompatActivity() {
         } else {
             lastImageViewStartButton?.visibility = View.INVISIBLE
             lastImageViewStopButton?.visibility = View.VISIBLE
+            seekBar?.visibility = View.INVISIBLE
             setLastListenedRecordButtons(lastImageViewActionStart, lastImageViewActionStop)
             stopMediaPlayer()
+        }
+    }
+
+    private val updateSongTime = object : Runnable {
+        override fun run() {
+            if (mediaPlayer != null) {
+                playTime = mediaPlayer?.currentPosition!!
+                seekBar?.progress = playTime
+                handler.postDelayed(this, 100)
+            } else {
+                seekBar?.progress = 0
+                seekBar?.visibility = View.INVISIBLE
+            }
         }
     }
 

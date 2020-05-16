@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
 import com.cisco.voicerecorder.R
 import com.cisco.voicerecorder.RecordLibrary
@@ -30,19 +31,38 @@ class CustomRecordAdapter(context: Context, list: List<File>?) : BaseAdapter() {
         val startPlaying = voiceRecord.findViewById<ImageView>(R.id.play_button)
         val stopPlaying = voiceRecord.findViewById<ImageView>(R.id.stop_button)
 
-        startPlaying.setOnClickListener {
-            startPlaying.visibility = View.INVISIBLE
-            stopPlaying.visibility = View.VISIBLE
-            recordLibrary.startAudio(stopPlaying, startPlaying, fileName)
-        }
+        val seekBar = voiceRecord.findViewById<SeekBar>(R.id.seek_bar)
 
+        startPlayingAudioEventListener(startPlaying, stopPlaying, fileName, seekBar)
+        stopPlayingEventListener(stopPlaying, startPlaying, seekBar)
+
+        return voiceRecord
+    }
+
+    private fun stopPlayingEventListener(
+        stopPlaying: ImageView,
+        startPlaying: ImageView,
+        seekBar: SeekBar
+    ) {
         stopPlaying.setOnClickListener {
             startPlaying.visibility = View.VISIBLE
             stopPlaying.visibility = View.INVISIBLE
             recordLibrary.stopAudio()
+            seekBar.progress = 0
         }
+    }
 
-        return voiceRecord
+    private fun startPlayingAudioEventListener(
+        startPlaying: ImageView,
+        stopPlaying: ImageView,
+        fileName: String?,
+        seekBar: SeekBar
+    ) {
+        startPlaying.setOnClickListener {
+            startPlaying.visibility = View.INVISIBLE
+            stopPlaying.visibility = View.VISIBLE
+            recordLibrary.startAudio(stopPlaying, startPlaying, fileName, seekBar)
+        }
     }
 
     override fun getItem(position: Int): File? {

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Environment
 import android.os.SystemClock
 import android.widget.Button
 import android.widget.Chronometer
@@ -14,7 +13,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import com.cisco.voicerecorder.utils.RecordedFiles
-import java.io.File
 import java.io.IOException
 
 class VoiceRecorder : AppCompatActivity() {
