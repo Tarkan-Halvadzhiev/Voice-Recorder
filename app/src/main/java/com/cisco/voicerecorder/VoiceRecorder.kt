@@ -7,20 +7,20 @@ import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
-import android.view.View
 import android.widget.Button
 import android.widget.Chronometer
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.cisco.voicerecorder.utils.RecordFiles
+import com.cisco.voicerecorder.utils.ExternalStorageDestination
+import com.cisco.voicerecorder.utils.RecordedFiles
+import java.io.File
 import java.io.IOException
 
 class VoiceRecorder : AppCompatActivity() {
 
-    private val recordFiles : RecordFiles = RecordFiles()
-    private var fileCounting: Int = recordFiles.getAllRecords()?.size ?: 0
-    private var output: String? = null
+    private var fileCounting: Int = RecordedFiles.getAllRecords()?.size ?: 0
+    private var output: String = ExternalStorageDestination.getPath()
     private var mediaRecorder: MediaRecorder? = null
     private val recordAudio = Manifest.permission.RECORD_AUDIO
     private val writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -49,7 +49,7 @@ class VoiceRecorder : AppCompatActivity() {
 
         button.setOnClickListener {
             when (button.text) {
-                "Record" -> startRecording(button, chronometer)
+                "Recording" -> startRecording(button, chronometer)
                 "Stop Recording" -> stopRecording(button, chronometer)
             }
         }
@@ -91,14 +91,14 @@ class VoiceRecorder : AppCompatActivity() {
     }
 
     private fun initializeMediaRecord() {
-        output =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).path + "/record-${fileCounting + 1}.mp3"
+
+        val outputFileDestination = "$output/record-${fileCounting + 1}.mp3"
         fileCounting++
         mediaRecorder = MediaRecorder()
         mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
         mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
         mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        mediaRecorder?.setOutputFile(output)
+        mediaRecorder?.setOutputFile(outputFileDestination)
     }
 
     private fun stopRecording(button: Button, chronometer: Chronometer) {

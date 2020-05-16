@@ -3,26 +3,24 @@ package com.cisco.voicerecorder
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Environment
 import android.view.View
 import android.widget.ImageView
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import com.cisco.voicerecorder.custom.adapter.CustomRecordAdapter
-import com.cisco.voicerecorder.utils.RecordFiles
+import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import java.io.File
 import java.io.IOException
+import com.cisco.voicerecorder.utils.RecordedFiles
 
 
 class RecordLibrary : AppCompatActivity() {
 
-    private val record: RecordFiles = RecordFiles()
-    private val recordFiles: List<File>? = record.getAllRecords()
+    private val recordFiles: List<File>? = RecordedFiles.getAllRecords()
     private var mediaPlayer: MediaPlayer? = null
     private var lastImageViewStartButton: ImageView? = null
     private var lastImageViewStopButton: ImageView? = null
-    private var mediaSource: String =
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).path + "/"
+    private var mediaSource: String = ExternalStorageDestination.getPath()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +44,7 @@ class RecordLibrary : AppCompatActivity() {
                 .build()
         )
         try {
-            mediaPlayer?.setDataSource(mediaSource + fileName)
+            mediaPlayer?.setDataSource("$mediaSource/$fileName")
             mediaPlayer?.prepare()
             mediaPlayer?.start()
         } catch (e: IOException) {

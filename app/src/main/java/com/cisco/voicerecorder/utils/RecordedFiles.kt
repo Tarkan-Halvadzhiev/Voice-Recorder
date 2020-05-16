@@ -3,13 +3,12 @@ package com.cisco.voicerecorder.utils
 import java.io.File
 
 
-class RecordFiles {
+object RecordedFiles {
 
-    private val directory: String =
-        android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_MUSIC).path
-    private var files: MutableList<File>? = null
+    @JvmStatic private val directory: String = ExternalStorageDestination.getPath()
+    @JvmStatic private var files: MutableList<File>? = null
 
-    fun getAllRecords(): List<File>? {
+    @JvmStatic fun getAllRecords(): List<File>? {
         val directoryFiles: Array<File> = File(directory).listFiles() ?: return emptyList()
 
         files = mutableListOf()
