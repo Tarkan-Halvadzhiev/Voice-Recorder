@@ -4,6 +4,7 @@ import java.io.File
 
 
 class RecordFiles {
+
     private val directory: String =
         android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_MUSIC).path
     private var files: MutableList<File>? = null
@@ -14,10 +15,8 @@ class RecordFiles {
         files = mutableListOf()
         for (file in directoryFiles) {
             val fileName = file.name
-            if (file.isFile && fileName.contains(".")) {
-                if (file.isFile && fileName.startsWith("record-") && fileName.endsWith(".mp3")) {
-                    files!!.add(file)
-                }
+            if (file.isFile && fileName.startsWith("record-") && fileName.endsWith(".mp3")) {
+                files!!.add(file)
             }
         }
 
