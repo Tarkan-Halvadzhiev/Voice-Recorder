@@ -70,7 +70,7 @@ class RecordLibrary : AppCompatActivity() {
         playTime = mediaPlayer?.currentPosition!!
         seekBar?.max = endTime
         seekBar?.progress = playTime
-        handler.postDelayed(updateSongTime, 100)
+        handler.postDelayed(updateSeekBarPosition, 100)
     }
 
     private fun finishAudioFile() {
@@ -118,7 +118,7 @@ class RecordLibrary : AppCompatActivity() {
         }
     }
 
-    private val updateSongTime = object : Runnable {
+    private val updateSeekBarPosition = object : Runnable {
         override fun run() {
             if (mediaPlayer != null) {
                 playTime = mediaPlayer?.currentPosition!!

@@ -5,10 +5,13 @@ import java.io.File
 
 object RecordedFiles {
 
-    @JvmStatic private val directory: String = ExternalStorageDestination.getPath()
-    @JvmStatic private var files: MutableList<File>? = null
+    @JvmStatic
+    private val directory: String = ExternalStorageDestination.getPath()
+    @JvmStatic
+    private var files: MutableList<File>? = null
 
-    @JvmStatic fun getAllRecords(): List<File>? {
+    @JvmStatic
+    fun getAllRecords(): List<File>? {
         val directoryFiles: Array<File> = File(directory).listFiles() ?: return emptyList()
 
         files = mutableListOf()

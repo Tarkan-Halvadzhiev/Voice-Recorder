@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RecordLibrary"
+            android:parentActivityName=".VoiceRecorder"
             android:label="@string/record_list"/>
     </application>
 </manifest>
