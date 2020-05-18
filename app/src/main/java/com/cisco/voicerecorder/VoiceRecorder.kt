@@ -90,7 +90,7 @@ class VoiceRecorder : AppCompatActivity() {
 
     private fun initializeMediaRecord() {
 
-        val outputFileDestination = "$output/record-${fileCounting + 1}.mp3"
+        val outputFileDestination = "$output/record-${fileCounting + 1}-voice.mp3"
         fileCounting++
         mediaRecorder = MediaRecorder()
         mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)

@@ -11,11 +11,12 @@ import android.widget.SeekBar
 import android.widget.TextView
 import com.cisco.voicerecorder.R
 import com.cisco.voicerecorder.RecordLibrary
+import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import java.io.File
 
 class CustomRecordAdapter(context: Context, list: List<File>?) : BaseAdapter() {
 
-    private var context: Context? = context
+    private val context: Context? = context
     private var records: List<File>? = list
     private var recordLibrary: RecordLibrary = RecordLibrary()
 
@@ -35,6 +36,15 @@ class CustomRecordAdapter(context: Context, list: List<File>?) : BaseAdapter() {
 
         startPlayingAudioEventListener(startPlaying, stopPlaying, fileName, seekBar)
         stopPlayingEventListener(stopPlaying, startPlaying, seekBar)
+
+        val picture = voiceRecord.findViewById<ImageView>(R.id.image_view)
+
+        picture.setOnLongClickListener {
+            val path: String = ExternalStorageDestination.getPath() + "/$fileName"
+            val myFile = File(path)
+            notifyDataSetChanged()
+            myFile.delete()
+        }
 
         return voiceRecord
     }
