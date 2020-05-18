@@ -39,14 +39,22 @@ class CustomRecordAdapter(context: Context, list: List<File>?) : BaseAdapter() {
 
         val picture = voiceRecord.findViewById<ImageView>(R.id.image_view)
 
+        //Functionality is not fully working
+        //deleteMediaFileEventListener(picture, fileName)
+
+        return voiceRecord
+    }
+
+    private fun deleteMediaFileEventListener(
+        picture: ImageView,
+        fileName: String?
+    ) {
         picture.setOnLongClickListener {
             val path: String = ExternalStorageDestination.getPath() + "/$fileName"
             val myFile = File(path)
             notifyDataSetChanged()
             myFile.delete()
         }
-
-        return voiceRecord
     }
 
     private fun stopPlayingEventListener(
