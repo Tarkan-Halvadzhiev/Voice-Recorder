@@ -18,7 +18,7 @@ import java.io.IOException
 
 class RecordLibrary : AppCompatActivity() {
 
-    private val recordFiles: List<File>? = RecordedFiles.getAllRecords()
+    private var recordFiles: MutableList<File>? = RecordedFiles.getAllRecords()
     private var mediaPlayer: MediaPlayer? = null
     private var lastImageViewStartButton: ImageView? = null
     private var lastImageViewStopButton: ImageView? = null
@@ -27,26 +27,25 @@ class RecordLibrary : AppCompatActivity() {
     private var endTime: Int = 0
     private var seekBar: SeekBar? = null
     private var handler: Handler = Handler()
+    private var listView: ListView? = null
+    private var adapter: CustomRecordAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.library_record_activity)
-        val listView: ListView = findViewById(R.id.audio_record)
 
-        listView.adapter = CustomRecordAdapter(this, recordFiles)
+        listView = findViewById(R.id.audio_record)
+        adapter = CustomRecordAdapter(this, recordFiles)
+        listView?.adapter = adapter
     }
 
     fun deleteMediaFileEventListener(
-        picture: ImageView,
         fileName: String?
     ) {
         try {
-            picture.setOnLongClickListener {
-                val path: String = ExternalStorageDestination.getPath() + "/$fileName"
-                val myFile = File(path)
-
-                myFile.delete()
-            }
+            val path: String = ExternalStorageDestination.getPath() + "/$fileName"
+            val myFile = File(path)
+            myFile.delete()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -76,6 +75,8 @@ class RecordLibrary : AppCompatActivity() {
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: RuntimeException) {
+            e.printStackTrace()
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 

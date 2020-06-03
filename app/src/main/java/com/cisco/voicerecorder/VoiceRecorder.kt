@@ -20,6 +20,7 @@ class VoiceRecorder : AppCompatActivity() {
     private var fileCounting: Int = RecordedFiles.getAllRecords()?.size ?: 0
     private var output: String = ExternalStorageDestination.getPath()
     private var mediaRecorder: MediaRecorder? = null
+    private var isRecording = false
     private val recordAudio = Manifest.permission.RECORD_AUDIO
     private val writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private val readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE
@@ -38,6 +39,12 @@ class VoiceRecorder : AppCompatActivity() {
     private fun redirectToRecordLibrary() {
         val button: Button = findViewById(R.id.record_library_view)
         button.setOnClickListener {
+            if (isRecording) {
+                val startButton: Button = findViewById(R.id.button_record)
+                val chronometer: Chronometer = findViewById(R.id.chronometer)
+                stopRecording(startButton, chronometer)
+            }
+
             val intent = Intent(this, RecordLibrary::class.java)
             startActivity(intent)
         }
@@ -63,6 +70,7 @@ class VoiceRecorder : AppCompatActivity() {
     }
 
     private fun startRecording(button: Button, chronometer: Chronometer) {
+        isRecording = true
         initializeMediaRecord()
         button.text = getString(R.string.button_name_stop_recording)
         chronometer.base = SystemClock.elapsedRealtime()
@@ -93,7 +101,8 @@ class VoiceRecorder : AppCompatActivity() {
 
     private fun initializeMediaRecord() {
 
-        val outputFileDestination = "$output/record-${fileCounting + 1}-voice.mp3"
+        val outputFileDestination =
+            "$output/record-${RecordedFiles.generateFileCounting()}-voice.mp3"
         fileCounting++
         mediaRecorder = MediaRecorder()
         mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -103,6 +112,7 @@ class VoiceRecorder : AppCompatActivity() {
     }
 
     private fun stopRecording(button: Button, chronometer: Chronometer) {
+        isRecording = false
         button.text = getString(R.string.button_name)
         chronometer.stop()
         chronometer.base = SystemClock.elapsedRealtime()

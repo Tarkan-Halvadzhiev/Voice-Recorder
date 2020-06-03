@@ -1,6 +1,7 @@
 package com.cisco.voicerecorder.custom.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +14,10 @@ import com.cisco.voicerecorder.R
 import com.cisco.voicerecorder.RecordLibrary
 import java.io.File
 
-class CustomRecordAdapter(context: Context, list: List<File>?) : BaseAdapter() {
+class CustomRecordAdapter(context: Context, list: MutableList<File>?) : BaseAdapter() {
 
     private val context: Context? = context
-    private var records: List<File>? = list
+    private var records: MutableList<File>? = list
     private var recordLibrary: RecordLibrary = RecordLibrary()
 
     @SuppressLint("ViewHolder")
@@ -37,18 +38,33 @@ class CustomRecordAdapter(context: Context, list: List<File>?) : BaseAdapter() {
         stopPlayingEventListener(stopPlaying, startPlaying, seekBar)
 
         val picture = voiceRecord.findViewById<ImageView>(R.id.image_view)
-
-        //Functionality is not fully working
-        //deleteMediaFileEventListener(picture, fileName)
+        picture.setOnClickListener {
+            deleteMediaFileEventListener(fileName, position)
+        }
 
         return voiceRecord
     }
 
     private fun deleteMediaFileEventListener(
-        picture: ImageView,
-        fileName: String?
+        fileName: String?,
+        position: Int
     ) {
-        recordLibrary.deleteMediaFileEventListener(picture, fileName)
+        val dialogBuilder = AlertDialog.Builder(context!!)
+        dialogBuilder.setMessage("Do you want to delete this item?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { dialog, _ ->
+                records?.removeAt(position)
+                recordLibrary.deleteMediaFileEventListener(fileName)
+                notifyDataSetChanged()
+
+                dialog.dismiss()
+            }.setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+
+        val alert = dialogBuilder.create()
+        alert.setTitle("Alert")
+        alert.show()
     }
 
     private fun stopPlayingEventListener(
