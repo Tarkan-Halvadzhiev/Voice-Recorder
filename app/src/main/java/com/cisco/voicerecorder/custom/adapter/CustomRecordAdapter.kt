@@ -11,7 +11,6 @@ import android.widget.SeekBar
 import android.widget.TextView
 import com.cisco.voicerecorder.R
 import com.cisco.voicerecorder.RecordLibrary
-import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import java.io.File
 
 class CustomRecordAdapter(context: Context, list: List<File>?) : BaseAdapter() {
@@ -49,12 +48,7 @@ class CustomRecordAdapter(context: Context, list: List<File>?) : BaseAdapter() {
         picture: ImageView,
         fileName: String?
     ) {
-        picture.setOnLongClickListener {
-            val path: String = ExternalStorageDestination.getPath() + "/$fileName"
-            val myFile = File(path)
-            notifyDataSetChanged()
-            myFile.delete()
-        }
+        recordLibrary.deleteMediaFileEventListener(picture, fileName)
     }
 
     private fun stopPlayingEventListener(

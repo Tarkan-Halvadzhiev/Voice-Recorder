@@ -33,6 +33,8 @@ class VoiceRecorder : AppCompatActivity() {
         redirectToRecordLibrary()
     }
 
+    //    private fun permission
+
     private fun redirectToRecordLibrary() {
         val button: Button = findViewById(R.id.record_library_view)
         button.setOnClickListener {
@@ -45,11 +47,18 @@ class VoiceRecorder : AppCompatActivity() {
         val button: Button = findViewById(R.id.button_record)
         val chronometer: Chronometer = findViewById(R.id.chronometer)
 
-        button.setOnClickListener {
-            when (button.text) {
-                "Recording" -> startRecording(button, chronometer)
-                "Stop Recording" -> stopRecording(button, chronometer)
+        // this try block catch all exception that can occur in this activity(MediaRecorder method exceptions)
+        try {
+            button.setOnClickListener {
+                when (button.text) {
+                    "Recording" -> startRecording(button, chronometer)
+                    "Stop Recording" -> stopRecording(button, chronometer)
+                }
             }
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
@@ -63,14 +72,8 @@ class VoiceRecorder : AppCompatActivity() {
     }
 
     private fun startMediaRecord() {
-        try {
-            mediaRecorder?.prepare()
-            mediaRecorder?.start()
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        mediaRecorder?.prepare()
+        mediaRecorder?.start()
     }
 
     private fun checkPermissions() {

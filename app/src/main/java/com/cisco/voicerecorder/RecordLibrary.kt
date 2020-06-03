@@ -36,27 +36,46 @@ class RecordLibrary : AppCompatActivity() {
         listView.adapter = CustomRecordAdapter(this, recordFiles)
     }
 
+    fun deleteMediaFileEventListener(
+        picture: ImageView,
+        fileName: String?
+    ) {
+        try {
+            picture.setOnLongClickListener {
+                val path: String = ExternalStorageDestination.getPath() + "/$fileName"
+                val myFile = File(path)
+
+                myFile.delete()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     fun startAudio(
         lastImageViewActionStart: ImageView,
         lastImageViewActionStop: ImageView,
         fileName: String?,
         seekBar: SeekBar
     ) {
-        setViabilityForPressedButtons(lastImageViewActionStart, lastImageViewActionStop)
-
-        mediaPlayer = MediaPlayer()
-        mediaPlayer?.setAudioAttributes(
-            AudioAttributes.Builder()
-                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                .build()
-        )
         try {
+            setViabilityForPressedButtons(lastImageViewActionStart, lastImageViewActionStop)
+
+            mediaPlayer = MediaPlayer()
+            mediaPlayer?.setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+
             mediaPlayer?.setDataSource("$mediaSource/$fileName")
             mediaPlayer?.prepare()
             mediaPlayer?.start()
 
             seekBarInitialization(seekBar)
         } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: RuntimeException) {
             e.printStackTrace()
         }
 
@@ -87,7 +106,11 @@ class RecordLibrary : AppCompatActivity() {
             setLastListenedRecordButtons(null, null)
         }
 
-        stopMediaPlayer()
+        try {
+            stopMediaPlayer()
+        } catch (e: IllegalStateException) {
+            e.printStackTrace()
+        }
     }
 
     private fun stopMediaPlayer() {
