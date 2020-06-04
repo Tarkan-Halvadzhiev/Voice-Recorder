@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.cisco.voicerecorder.utils.ExternalStorageDestination
+import com.cisco.voicerecorder.utils.PermissionChecker
 import com.cisco.voicerecorder.utils.RecordedFiles
 import java.io.IOException
 
@@ -30,11 +31,39 @@ class VoiceRecorder : AppCompatActivity() {
         setContentView(R.layout.main_activity)
 
         checkPermissions()
-        pressedButton()
-        redirectToRecordLibrary()
+        startApplicationFunctionality()
     }
 
-    //    private fun permission
+    private fun startApplicationFunctionality() {
+        val button: Button = findViewById(R.id.button_record)
+        button.isClickable = false
+        val redirect: Button = findViewById(R.id.record_library_view)
+        redirect.isClickable = false
+
+        if (ContextCompat.checkSelfPermission(this, recordAudio)
+            != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this, writeExternalStorage)
+            != PackageManager.PERMISSION_GRANTED
+            || ContextCompat.checkSelfPermission(this, readExternalStorage)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            PermissionChecker.permissionMessage(this)
+        } else {
+            button.isClickable = true
+            redirect.isClickable = true
+            pressedButton()
+            redirectToRecordLibrary()
+        }
+    }
+
+    private fun isPermissionsGranted(): Boolean {
+        return (ContextCompat.checkSelfPermission(this, recordAudio)
+                != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, writeExternalStorage)
+                != PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, readExternalStorage)
+                != PackageManager.PERMISSION_GRANTED)
+    }
 
     private fun redirectToRecordLibrary() {
         val button: Button = findViewById(R.id.record_library_view)
@@ -85,18 +114,18 @@ class VoiceRecorder : AppCompatActivity() {
     }
 
     private fun checkPermissions() {
-        if (ContextCompat.checkSelfPermission(this, recordAudio)
-            != PackageManager.PERMISSION_GRANTED
-            && ContextCompat.checkSelfPermission(this, writeExternalStorage)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            val permissions = arrayOf(
-                recordAudio,
-                writeExternalStorage,
-                readExternalStorage
-            )
-            ActivityCompat.requestPermissions(this, permissions, 0)
+        if (isPermissionsGranted()) {
+            requestPermission()
         }
+    }
+
+    private fun requestPermission() {
+        val permissions = arrayOf(
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+        ActivityCompat.requestPermissions(this, permissions, 1)
     }
 
     private fun initializeMediaRecord() {
