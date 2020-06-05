@@ -1,5 +1,6 @@
 package com.cisco.voicerecorder
 
+import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -37,6 +38,12 @@ class RecordLibrary : AppCompatActivity() {
         listView = findViewById(R.id.audio_record)
         adapter = CustomRecordAdapter(this, recordFiles)
         listView?.adapter = adapter
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        val intent = Intent(this, VoiceRecorder::class.java)
+        startActivity(intent)
     }
 
     fun deleteMediaFileEventListener(
