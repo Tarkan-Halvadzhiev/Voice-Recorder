@@ -3,7 +3,6 @@ package com.cisco.voicerecorder
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaRecorder
 import android.os.Bundle
 import android.os.SystemClock
 import android.widget.Button
@@ -11,17 +10,13 @@ import android.widget.Chronometer
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.cisco.voicerecorder.utils.ExternalStorageDestination
+import com.cisco.voicerecorder.service.VoiceRecorderService
 import com.cisco.voicerecorder.utils.PermissionChecker
-import com.cisco.voicerecorder.utils.RecordedFiles
-import java.io.IOException
 
 class VoiceRecorder : AppCompatActivity() {
 
-    private var fileCounting: Int = RecordedFiles.getAllRecords()?.size ?: 0
-    private var output: String = ExternalStorageDestination.getPath()
-    private var mediaRecorder: MediaRecorder? = null
     private var isRecording = false
+    private val voiceRecorderService: VoiceRecorderService = VoiceRecorderService()
     private val recordAudio = Manifest.permission.RECORD_AUDIO
     private val writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private val readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE
@@ -83,34 +78,22 @@ class VoiceRecorder : AppCompatActivity() {
         val button: Button = findViewById(R.id.button_record)
         val chronometer: Chronometer = findViewById(R.id.chronometer)
 
-        // this try block catch all exception that can occur in this activity(MediaRecorder method exceptions)
-        try {
-            button.setOnClickListener {
-                when (button.text) {
-                    "Recording" -> startRecording(button, chronometer)
-                    "Stop Recording" -> stopRecording(button, chronometer)
-                }
+        button.setOnClickListener {
+            when (button.text) {
+                "Recording" -> startRecording(button, chronometer)
+                "Stop Recording" -> stopRecording(button, chronometer)
             }
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
     }
 
     private fun startRecording(button: Button, chronometer: Chronometer) {
         isRecording = true
-        initializeMediaRecord()
+        voiceRecorderService.initializeMediaRecord()
         button.text = getString(R.string.button_name_stop_recording)
         chronometer.base = SystemClock.elapsedRealtime()
         chronometer.start()
 
-        startMediaRecord()
-    }
-
-    private fun startMediaRecord() {
-        mediaRecorder?.prepare()
-        mediaRecorder?.start()
+        voiceRecorderService.startMediaRecord()
     }
 
     private fun checkPermissions() {
@@ -128,31 +111,12 @@ class VoiceRecorder : AppCompatActivity() {
         ActivityCompat.requestPermissions(this, permissions, 1)
     }
 
-    private fun initializeMediaRecord() {
-
-        val outputFileDestination =
-            "$output/record-${RecordedFiles.generateFileCounting()}-voice.mp3"
-        fileCounting++
-        mediaRecorder = MediaRecorder()
-        mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-        mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-        mediaRecorder?.setOutputFile(outputFileDestination)
-    }
-
     private fun stopRecording(button: Button, chronometer: Chronometer) {
         isRecording = false
         button.text = getString(R.string.button_name)
         chronometer.stop()
         chronometer.base = SystemClock.elapsedRealtime()
 
-        stopMediaRecord()
-    }
-
-    private fun stopMediaRecord() {
-        mediaRecorder?.stop()
-        mediaRecorder?.reset()
-        mediaRecorder?.release()
-        mediaRecorder = null
+        voiceRecorderService.stopMediaRecord()
     }
 }

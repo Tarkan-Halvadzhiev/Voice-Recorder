@@ -91,7 +91,9 @@ class RecordLibraryTest {
         beforePressingState(0)
 
         //after pressing
-        afterPressingState(0)
+        onData(anything()).inAdapterView(withId(R.id.audio_record)).atPosition(0)
+            .onChildView(withId(R.id.play_button)).perform(click())
+            .check(matches(not(isDisplayed())))
     }
 
     @Test
