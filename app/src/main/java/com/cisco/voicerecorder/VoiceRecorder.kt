@@ -11,12 +11,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.cisco.voicerecorder.service.VoiceRecorderService
+import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import com.cisco.voicerecorder.utils.PermissionChecker
+import com.cisco.voicerecorder.utils.RecordedFiles
 
 class VoiceRecorder : AppCompatActivity() {
 
     private var isRecording = false
-    private val voiceRecorderService: VoiceRecorderService = VoiceRecorderService()
+    private val voiceRecorderService: VoiceRecorderService = VoiceRecorderService(
+        ExternalStorageDestination.getPath(),
+        recordedFiles = RecordedFiles.getAllRecords()?.size ?: 0
+    )
     private val recordAudio = Manifest.permission.RECORD_AUDIO
     private val writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private val readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE

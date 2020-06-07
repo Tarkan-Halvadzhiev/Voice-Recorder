@@ -1,34 +1,40 @@
 package com.cisco.voicerecorder.service
 
 import android.media.MediaRecorder
-import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import com.cisco.voicerecorder.utils.RecordedFiles
-import java.io.IOException
 
-class VoiceRecorderService {
+class VoiceRecorderService(
+    mediaOutput: String,
+    mediaRecorder: MediaRecorder? = null,
+    recordedFiles: Int = 0
+) {
 
-    private var fileCounting: Int = RecordedFiles.getAllRecords()?.size ?: 0
-    private var mediaRecorder: MediaRecorder? = null
-    private var output: String = ExternalStorageDestination.getPath()
+    private var fileCounting: Int = recordedFiles
+    private var mediaRecorder: MediaRecorder? = mediaRecorder
+    private var output: String = mediaOutput
+
+    fun getMediaRecorder() = mediaRecorder
 
     fun startMediaRecord() {
-        mediaRecorder?.prepare()
-        mediaRecorder?.start()
+        try {
+            mediaRecorder?.prepare()
+            mediaRecorder?.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     fun initializeMediaRecord() {
         try {
             val outputFileDestination =
-                "$output/record-${RecordedFiles.generateFileCounting()}-voice.mp3"
+                "${output}/record-${RecordedFiles.generateFileCounting()}-voice.mp3"
             fileCounting++
             mediaRecorder = MediaRecorder()
             mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC)
             mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
             mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
             mediaRecorder?.setOutputFile(outputFileDestination)
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -39,7 +45,7 @@ class VoiceRecorderService {
             mediaRecorder?.reset()
             mediaRecorder?.release()
             mediaRecorder = null
-        } catch (e: IllegalStateException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }

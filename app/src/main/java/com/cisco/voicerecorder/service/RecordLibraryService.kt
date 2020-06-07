@@ -2,14 +2,13 @@ package com.cisco.voicerecorder.service
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
-import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import java.io.File
-import java.io.IOException
 
-class RecordLibraryService {
-
-    private var mediaPlayer: MediaPlayer? = null
-    private var mediaSource: String = ExternalStorageDestination.getPath()
+class RecordLibraryService(
+    private var mediaSource: String,
+    private var mediaPlayer: MediaPlayer? = null,
+    private var attributes: AudioAttributes? = null
+) {
 
     fun getMediaPlayer() = mediaPlayer
 
@@ -17,7 +16,7 @@ class RecordLibraryService {
         fileName: String?
     ) {
         try {
-            val path: String = ExternalStorageDestination.getPath() + "/$fileName"
+            val path: String = "$mediaSource/$fileName"
             val myFile = File(path)
             myFile.delete()
         } catch (e: Exception) {
@@ -30,20 +29,10 @@ class RecordLibraryService {
     ) {
         try {
             mediaPlayer = MediaPlayer()
-            mediaPlayer?.setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .build()
-            )
-
+            mediaPlayer?.setAudioAttributes(attributes)
             mediaPlayer?.setDataSource("$mediaSource/$fileName")
             mediaPlayer?.prepare()
             mediaPlayer?.start()
-
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } catch (e: RuntimeException) {
-            e.printStackTrace()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -53,14 +42,14 @@ class RecordLibraryService {
         try {
             if (mediaPlayer != null) {
                 mediaPlayer?.stop()
-                releaseMediaPlayerRecourse()
+                releaseMediaPlayerResources()
             }
-        } catch (e: IllegalStateException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    fun releaseMediaPlayerRecourse() {
+    fun releaseMediaPlayerResources() {
         mediaPlayer?.reset()
         mediaPlayer?.release()
         mediaPlayer = null

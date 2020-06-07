@@ -1,6 +1,7 @@
 package com.cisco.voicerecorder
 
 import android.content.Intent
+import android.media.AudioAttributes
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
@@ -10,6 +11,7 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.cisco.voicerecorder.custom.adapter.CustomRecordAdapter
 import com.cisco.voicerecorder.service.RecordLibraryService
+import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import com.cisco.voicerecorder.utils.RecordedFiles
 import java.io.File
 
@@ -19,7 +21,11 @@ class RecordLibrary : AppCompatActivity() {
     private var recordFiles: MutableList<File>? = RecordedFiles.getAllRecords()
     private var lastImageViewStartButton: ImageView? = null
     private var lastImageViewStopButton: ImageView? = null
-    private val recordLibraryService: RecordLibraryService = RecordLibraryService()
+    private val recordLibraryService: RecordLibraryService = RecordLibraryService(
+        ExternalStorageDestination.getPath(), null, AudioAttributes.Builder()
+            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+            .build()
+    )
     private var playTime: Int = 0
     private var endTime: Int = 0
     private var seekBar: SeekBar? = null
@@ -79,7 +85,7 @@ class RecordLibrary : AppCompatActivity() {
             lastImageViewStartButton?.visibility = View.INVISIBLE
             lastImageViewStopButton?.visibility = View.VISIBLE
             seekBar?.visibility = View.INVISIBLE
-            recordLibraryService.releaseMediaPlayerRecourse()
+            recordLibraryService.releaseMediaPlayerResources()
         }
     }
 
