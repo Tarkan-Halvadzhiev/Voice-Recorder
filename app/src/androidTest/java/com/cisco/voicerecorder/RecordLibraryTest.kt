@@ -108,8 +108,8 @@ class RecordLibraryTest {
         onData(anything()).inAdapterView(withId(R.id.audio_record)).atPosition(0)
             .onChildView(withId(R.id.stop_button)).perform(click())
             .check(matches(not(isDisplayed())))
-
-        checkMatchesStateWhenIsNotDisplayed(0)
+        onData(anything()).inAdapterView(withId(R.id.audio_record)).atPosition(0)
+            .onChildView(withId(R.id.stop_button)).check(matches(not(isDisplayed())))
     }
 
     @Test

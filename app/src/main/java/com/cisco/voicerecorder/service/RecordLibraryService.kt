@@ -12,6 +12,24 @@ class RecordLibraryService(
 
     fun getMediaPlayer() = mediaPlayer
 
+    fun pauseMediaPlayer() {
+        try {
+            mediaPlayer?.pause()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun resumeMediaPlayer(position: Int) {
+        try {
+            mediaPlayer?.start()
+            mediaPlayer?.seekTo(position)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     fun deleteMediaFile(
         fileName: String?
     ) {

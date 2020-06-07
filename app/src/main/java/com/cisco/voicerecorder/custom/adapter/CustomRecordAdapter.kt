@@ -34,6 +34,7 @@ class CustomRecordAdapter(context: Context, list: MutableList<File>?) : BaseAdap
 
         val seekBar = voiceRecord.findViewById<SeekBar>(R.id.seek_bar)
 
+        seekBarEventListener(seekBar)
         startPlayingAudioEventListener(startPlaying, stopPlaying, fileName, seekBar)
         stopPlayingEventListener(stopPlaying, startPlaying, seekBar)
 
@@ -43,6 +44,30 @@ class CustomRecordAdapter(context: Context, list: MutableList<File>?) : BaseAdap
         }
 
         return voiceRecord
+    }
+
+    private fun seekBarEventListener(seekBar: SeekBar) {
+        var seekBarPosition: Int = 0
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: SeekBar, progress: Int,
+                fromUser: Boolean
+            ) {
+                if (fromUser) {
+                    seekBarPosition = progress
+                    recordLibrary.changePlayTimePosition(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                recordLibrary.pauseMediaPlayer()
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                recordLibrary.resumeMediaPlayer(seekBarPosition)
+            }
+        })
     }
 
     private fun deleteMediaFileEventListener(

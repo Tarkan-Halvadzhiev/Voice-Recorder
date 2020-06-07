@@ -68,6 +68,19 @@ class RecordLibrary : AppCompatActivity() {
         finishAudioFile()
     }
 
+    fun changePlayTimePosition(position: Int) {
+        val mediaPlayer = recordLibraryService.getMediaPlayer()
+        mediaPlayer?.seekTo(position)
+    }
+
+    fun pauseMediaPlayer() {
+        recordLibraryService.pauseMediaPlayer()
+    }
+
+    fun resumeMediaPlayer(position: Int) {
+        recordLibraryService.resumeMediaPlayer(position)
+    }
+
     private fun seekBarInitialization(currentSeekBar: SeekBar) {
         val mediaPlayer = recordLibraryService.getMediaPlayer()
         seekBar = currentSeekBar
@@ -122,7 +135,7 @@ class RecordLibrary : AppCompatActivity() {
             if (mediaPlayer != null) {
                 playTime = mediaPlayer.currentPosition
                 seekBar?.progress = playTime
-                handler.postDelayed(this, 100)
+                handler.postDelayed(this, 1000)
             } else {
                 seekBar?.progress = 0
                 seekBar?.visibility = View.INVISIBLE
