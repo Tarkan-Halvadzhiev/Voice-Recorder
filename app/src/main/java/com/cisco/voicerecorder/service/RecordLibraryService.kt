@@ -18,7 +18,6 @@ class RecordLibraryService(
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     fun resumeMediaPlayer(position: Int) {

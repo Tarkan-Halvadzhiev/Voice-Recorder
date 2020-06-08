@@ -1,21 +1,23 @@
 package com.cisco.voicerecorder.utils
 
-import android.app.AlertDialog
 import android.content.Context
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 
 object PermissionChecker {
 
     @JvmStatic
-    fun permissionMessage(context: Context) {
-        val dialogBuilder = AlertDialog.Builder(context)
-        dialogBuilder.setMessage("Go to setting to give permission to use this application.")
-            .setCancelable(false)
-            .setPositiveButton("Ok") { dialog, _ ->
-                dialog.dismiss()
-            }
-
-        val alert = dialogBuilder.create()
-        alert.setTitle("Alert")
-        alert.show()
+    fun permissionChecking(
+        context: Context,
+        recordAudio: String,
+        writeExternalStorage: String,
+        readExternalStorage: String
+    ): Boolean {
+        return (ContextCompat.checkSelfPermission(context, recordAudio)
+                != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(context, writeExternalStorage)
+                != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(context, readExternalStorage)
+                != PackageManager.PERMISSION_GRANTED)
     }
 }

@@ -1,6 +1,5 @@
 package com.cisco.voicerecorder
 
-import android.content.Intent
 import android.media.AudioAttributes
 import android.os.Bundle
 import android.os.Handler
@@ -11,6 +10,7 @@ import android.widget.SeekBar
 import androidx.appcompat.app.AppCompatActivity
 import com.cisco.voicerecorder.custom.adapter.CustomRecordAdapter
 import com.cisco.voicerecorder.service.RecordLibraryService
+import com.cisco.voicerecorder.utils.DialogMessageBuilder
 import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import com.cisco.voicerecorder.utils.RecordedFiles
 import java.io.File
@@ -36,16 +36,11 @@ class RecordLibrary : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.library_record_activity)
+        DialogMessageBuilder.messageBuilding(this, R.string.info_message, R.string.info_message_title)
 
         listView = findViewById(R.id.audio_record)
         adapter = CustomRecordAdapter(this, recordFiles)
         listView?.adapter = adapter
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        val intent = Intent(this, VoiceRecorder::class.java)
-        startActivity(intent)
     }
 
     fun deleteMediaFileEventListener(
@@ -107,11 +102,7 @@ class RecordLibrary : AppCompatActivity() {
             setLastListenedRecordButtons(null, null)
         }
 
-        try {
-            recordLibraryService.stopMediaPlayer()
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
-        }
+        recordLibraryService.stopMediaPlayer()
     }
 
     private fun setViabilityForPressedButtons(

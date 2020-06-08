@@ -5,4 +5,9 @@
     <string name="records">My Records</string>
     <string name="record_name">Record Name</string>
     <string name="record_list">Record list</string>
+    <string name="info_message">If you want to delete any item press music icon.</string>
+    <string name="permission_message">Go to setting to give permission to use this application.</string>
+    <string name="positive_button_text">OK</string>
+    <string name="permission_message_title">Alert</string>
+    <string name="info_message_title">Info</string>
 </resources>

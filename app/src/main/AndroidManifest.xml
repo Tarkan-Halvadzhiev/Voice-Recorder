@@ -24,6 +24,7 @@
         <activity
             android:name=".RecordLibrary"
             android:label="@string/record_list"
-            android:parentActivityName=".VoiceRecorder" />
+            android:parentActivityName=".VoiceRecorder"
+            android:noHistory="true"/>
     </application>
 </manifest>

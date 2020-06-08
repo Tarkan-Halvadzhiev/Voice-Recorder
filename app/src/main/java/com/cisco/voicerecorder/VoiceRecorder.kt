@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.cisco.voicerecorder.service.VoiceRecorderService
+import com.cisco.voicerecorder.utils.DialogMessageBuilder
 import com.cisco.voicerecorder.utils.ExternalStorageDestination
 import com.cisco.voicerecorder.utils.PermissionChecker
 import com.cisco.voicerecorder.utils.RecordedFiles
@@ -40,14 +41,18 @@ class VoiceRecorder : AppCompatActivity() {
         val redirect: Button = findViewById(R.id.record_library_view)
         redirect.isClickable = false
 
-        if (ContextCompat.checkSelfPermission(this, recordAudio)
-            != PackageManager.PERMISSION_GRANTED
-            || ContextCompat.checkSelfPermission(this, writeExternalStorage)
-            != PackageManager.PERMISSION_GRANTED
-            || ContextCompat.checkSelfPermission(this, readExternalStorage)
-            != PackageManager.PERMISSION_GRANTED
+        if (PermissionChecker.permissionChecking(
+                this,
+                recordAudio,
+                writeExternalStorage,
+                readExternalStorage
+            )
         ) {
-            PermissionChecker.permissionMessage(this)
+            DialogMessageBuilder.messageBuilding(
+                this,
+                R.string.permission_message,
+                R.string.permission_message_title
+            )
         } else {
             button.isClickable = true
             redirect.isClickable = true
