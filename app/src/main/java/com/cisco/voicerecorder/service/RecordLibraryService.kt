@@ -2,6 +2,7 @@ package com.cisco.voicerecorder.service
 
 import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.util.Log
 import java.io.File
 
 class RecordLibraryService(
@@ -10,12 +11,16 @@ class RecordLibraryService(
     private var attributes: AudioAttributes? = null
 ) {
 
+    private val classNameTag: String = "RecordLibraryService"
+    private val logMessage: String = "Media file was successfully"
+
     fun getMediaPlayer() = mediaPlayer
 
     fun pauseMediaPlayer() {
         try {
             mediaPlayer?.pause()
         } catch (e: Exception) {
+            Log.e(classNameTag, e.message)
             e.printStackTrace()
         }
     }
@@ -25,6 +30,7 @@ class RecordLibraryService(
             mediaPlayer?.start()
             mediaPlayer?.seekTo(position)
         } catch (e: Exception) {
+            Log.e(classNameTag, e.message)
             e.printStackTrace()
         }
     }
@@ -36,7 +42,9 @@ class RecordLibraryService(
             val path: String = "$mediaSource/$fileName"
             val myFile = File(path)
             myFile.delete()
+            Log.i(classNameTag,"$logMessage deleted.")
         } catch (e: Exception) {
+            Log.e(classNameTag, e.message)
             e.printStackTrace()
         }
     }
@@ -50,7 +58,9 @@ class RecordLibraryService(
             mediaPlayer?.setDataSource("$mediaSource/$fileName")
             mediaPlayer?.prepare()
             mediaPlayer?.start()
+            Log.i(classNameTag,"$logMessage started.")
         } catch (e: Exception) {
+            Log.e(classNameTag, e.message)
             e.printStackTrace()
         }
     }
@@ -61,7 +71,9 @@ class RecordLibraryService(
                 mediaPlayer?.stop()
                 releaseMediaPlayerResources()
             }
+            Log.i(classNameTag,"$logMessage stopped.")
         } catch (e: Exception) {
+            Log.e(classNameTag, e.message)
             e.printStackTrace()
         }
     }
