@@ -69,24 +69,18 @@ class VoiceRecorderTest {
     @Test
     fun userPressedButtonForStartingNewActivity_Successfully() {
         val activity: Activity = activityRule.activity
-        if (PermissionChecker.permissionChecking(
+        if (!PermissionChecker.permissionChecking(
                 activity,
                 recordAudio,
                 writeExternalStorage,
                 readExternalStorage
             )
         ) {
-            dismissDialog()
-        } else {
             Intents.init()
             activityRule.launchActivity(Intent())
 
             onView(withId(R.id.record_library_view)).perform(click())
             intended(hasComponent(RecordLibrary::class.java.name))
-            onView(withText(text))
-                .inRoot(isDialog())
-                .check(matches(isDisplayed()))
-                .perform(click())
             onView(withId(R.id.audio_record)).check(matches(isDisplayed()))
 
             Intents.release()

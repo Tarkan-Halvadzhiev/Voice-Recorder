@@ -13,7 +13,6 @@ import com.cisco.voicerecorder.utils.RecordedFiles
 import junit.framework.Assert.assertEquals
 import org.hamcrest.CoreMatchers.anything
 import org.hamcrest.CoreMatchers.not
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -31,13 +30,11 @@ class RecordLibraryTest {
 
     @Test
     fun displayAllRecord_Successfully() {
-        dismissDialogWindow()
         onView(withId(R.id.audio_record)).check(matches(isDisplayed()))
     }
 
     @Test
     fun userOpenDialogForDeletingFunctionality_Successfully() {
-        dismissDialogWindow()
         openDialogForDeleting()
 
         onView(withText(alertText))
@@ -47,7 +44,6 @@ class RecordLibraryTest {
 
     @Test
     fun userCloseDialogByClickButton_Successfully() {
-        dismissDialogWindow()
         openDialogForDeleting()
 
         onView(withText(noText))
@@ -65,7 +61,6 @@ class RecordLibraryTest {
 
     @Test
     fun userDeleteRecord_Successfully() {
-        dismissDialogWindow()
         openDialogForDeleting()
         val beforeDeletingFilesSize: Int = RecordedFiles.getAllRecords()?.size ?: 0
 
@@ -81,7 +76,6 @@ class RecordLibraryTest {
 
     @Test
     fun userRejectDeleteRecord_Successfully() {
-        dismissDialogWindow()
         openDialogForDeleting()
         val beforeDeletingFilesSize: Int = RecordedFiles.getAllRecords()?.size ?: 0
 
@@ -98,7 +92,6 @@ class RecordLibraryTest {
     @Test
     fun userPressedPlayButton_Successfully() {
         //before pressing
-        dismissDialogWindow()
         beforePressingState(0)
 
         //after pressing
@@ -110,7 +103,6 @@ class RecordLibraryTest {
     @Test
     fun userPressedPlayButtonAndThenStopRecord_Successfully() {
         //before pressing
-        dismissDialogWindow()
         beforePressingState(0)
 
         //after pressing play button
@@ -127,7 +119,6 @@ class RecordLibraryTest {
     @Test
     fun userPressedPlayButtonToOtherRecordWhenIsAlreadyPlayingRecord_Successfully() {
         //before pressing
-        dismissDialogWindow()
         beforePressingState(0)
 
         //before pressing play button at position 0
@@ -175,12 +166,5 @@ class RecordLibraryTest {
             .onChildView(withId(R.id.stop_button)).check(matches(not(isDisplayed())))
         onData(anything()).inAdapterView(withId(R.id.audio_record)).atPosition(position)
             .onChildView(withId(R.id.seek_bar)).check(matches(not(isDisplayed())))
-    }
-
-    private fun dismissDialogWindow() {
-        onView(withText("OK"))
-            .inRoot(isDialog())
-            .check(matches(isDisplayed()))
-            .perform(click())
     }
 }
